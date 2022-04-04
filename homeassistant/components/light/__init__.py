@@ -97,6 +97,23 @@ COLOR_MODES_COLOR = {
 }
 
 
+def filter_supported_color_modes(color_modes: Iterable[str]) -> set[str]:
+    """Filter the given color modes."""
+    color_modes = set(color_modes)
+    if (
+        not color_modes
+        or COLOR_MODE_UNKNOWN in color_modes
+        or (COLOR_MODE_WHITE in color_modes and not color_supported(color_modes))
+    ):
+        raise HomeAssistantError
+
+    if COLOR_MODE_BRIGHTNESS in color_modes and len(color_modes) > 1:
+        color_modes.remove(COLOR_MODE_BRIGHTNESS)
+    if COLOR_MODE_ONOFF in color_modes and len(color_modes) > 1:
+        color_modes.remove(COLOR_MODE_ONOFF)
+    return color_modes
+
+
 def valid_supported_color_modes(color_modes: Iterable[str]) -> set[str]:
     """Validate the given color modes."""
     color_modes = set(color_modes)
